@@ -1,5 +1,5 @@
 mountpoints:
   /:
-    url: "https://author-p34771-e1278037.adobeaemcloud.com/ui#/aem/sites.html/content"
+    url: "https://author-p34771-e1278037.adobeaemcloud.com/bin/franklin.delivery/amahar/universal-editing/main"
     type: "markup"
     suffix: ".html"
