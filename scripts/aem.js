@@ -724,6 +724,119 @@ async function loadSections(element) {
   }
 }
 
+// AEM Authentication and Token Management
+const AEM_HOST = 'https://author-p34771-e1278037.adobeaemcloud.com';
+const UE_SERVICE_URL = 'https://universal-editor-service.adobe.io';
+
+async function getAEMToken() {
+    try {
+        const response = await fetch(`${AEM_HOST}/libs/granite/csrf/token.json`, {
+            credentials: 'include'
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to get AEM token');
+        }
+        
+        const data = await response.json();
+        console.log('AEM Token received:', data.token);
+        return data.token;
+    } catch (error) {
+        console.error('Error getting AEM token:', error);
+        return null;
+    }
+}
+
+async function getUEToken() {
+    try {
+        // First get the AEM token as it's needed for UE authentication
+        const aemToken = await getAEMToken();
+        if (!aemToken) {
+            throw new Error('No AEM token available for UE authentication');
+        }
+
+        // Get UE token using AEM token
+        const response = await fetch(`${UE_SERVICE_URL}/auth/token`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${aemToken}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to get UE token');
+        }
+
+        const data = await response.json();
+        console.log('UE Token received');
+        return data.token;
+    } catch (error) {
+        console.error('Error getting UE token:', error);
+        return null;
+    }
+}
+
+// Update both AEM and UE connections with their respective tokens
+async function updateConnections() {
+    // Update AEM connection
+    const aemToken = await getAEMToken();
+    if (aemToken) {
+        const aemMetaTag = document.querySelector('meta[name="urn:adobe:aue:system:aemconnection"]');
+        if (aemMetaTag) {
+            const newAemContent = `aem:${AEM_HOST}?login-token=${aemToken}`;
+            aemMetaTag.setAttribute('content', newAemContent);
+            console.log('Updated AEM connection with token');
+        }
+    }
+
+    // Update UE service connection
+    const ueToken = await getUEToken();
+    if (ueToken) {
+        const ueMetaTag = document.querySelector('meta[name="urn:adobe:aue:config:service"]');
+        if (ueMetaTag) {
+            const newUeContent = `${UE_SERVICE_URL}?token=${ueToken}`;
+            ueMetaTag.setAttribute('content', newUeContent);
+            console.log('Updated UE service connection with token');
+        }
+    }
+
+    // Update status indicator
+    const tokenIndicator = document.createElement('div');
+    tokenIndicator.id = 'token-indicator';
+    tokenIndicator.style.position = 'fixed';
+    tokenIndicator.style.bottom = '10px';
+    tokenIndicator.style.right = '10px';
+    tokenIndicator.style.padding = '5px 10px';
+    tokenIndicator.style.borderRadius = '4px';
+    tokenIndicator.style.zIndex = '9999';
+
+    if (aemToken && ueToken) {
+        tokenIndicator.style.background = '#4CAF50';
+        tokenIndicator.style.color = 'white';
+        tokenIndicator.textContent = 'Authentication: Active';
+    } else {
+        tokenIndicator.style.background = '#f44336';
+        tokenIndicator.style.color = 'white';
+        tokenIndicator.textContent = 'Authentication: Missing';
+    }
+
+    // Remove existing indicator if any
+    const existingIndicator = document.getElementById('token-indicator');
+    if (existingIndicator) {
+        existingIndicator.remove();
+    }
+    document.body.appendChild(tokenIndicator);
+}
+
+// Initialize when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    updateConnections();
+});
+
+// Refresh tokens periodically (every 30 minutes)
+setInterval(updateConnections, 30 * 60 * 1000);
+
 init();
 
 export {
