@@ -656,7 +656,7 @@ async function loadHeader(header) {
   if (!header) {
     // eslint-disable-next-line no-console
     console.warn('Header element not found');
-    return;
+    return null;
   }
   const headerBlock = buildBlock('header', '');
   header.append(headerBlock);
@@ -673,7 +673,7 @@ async function loadFooter(footer) {
   if (!footer) {
     // eslint-disable-next-line no-console
     console.warn('Footer element not found');
-    return;
+    return null;
   }
   const footerBlock = buildBlock('footer', '');
   footer.append(footerBlock);
@@ -742,7 +742,6 @@ async function getAEMToken() {
   try {
     // Check if we're on the same origin as AEM
     const isSameOrigin = window.location.origin === new URL(AEM_HOST).origin;
-    
     if (!isSameOrigin) {
       // eslint-disable-next-line no-console
       console.warn('Not on AEM origin, skipping token fetch');
@@ -752,14 +751,12 @@ async function getAEMToken() {
     const response = await fetch(`${AEM_HOST}/libs/granite/csrf/token.json`, {
       credentials: 'include',
       headers: {
-        'Accept': 'application/json',
+        Accept: 'application/json',
       },
     });
-    
     if (!response.ok) {
       throw new Error(`Failed to get AEM token: ${response.status} ${response.statusText}`);
     }
-    
     const data = await response.json();
     // eslint-disable-next-line no-console
     console.log('AEM Token received');
