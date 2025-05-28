@@ -164,3 +164,14 @@ export default async function decorate(block) {
   navWrapper.append(nav);
   block.append(navWrapper);
 }
+
+export default async function init(block) {
+  // Header block initialization
+  block.innerHTML = `
+    <div>
+      <div>
+        <p>Header Content</p>
+      </div>
+    </div>
+  `;
+}

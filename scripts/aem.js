@@ -773,7 +773,9 @@ async function getUEToken() {
     // First get the AEM token as it's needed for UE authentication
     const aemToken = await getAEMToken();
     if (!aemToken) {
-      throw new Error('No AEM token available for UE authentication');
+      // eslint-disable-next-line no-console
+      console.warn('No AEM token available for UE authentication');
+      return null;
     }
 
     // Get UE token using AEM token
@@ -786,7 +788,7 @@ async function getUEToken() {
     });
 
     if (!response.ok) {
-      throw new Error('Failed to get UE token');
+      throw new Error(`Failed to get UE token: ${response.status} ${response.statusText}`);
     }
 
     const data = await response.json();
@@ -802,31 +804,41 @@ async function getUEToken() {
 
 // Update both AEM and UE connections with their respective tokens
 async function updateConnections() {
-  // Update AEM connection
-  const aemToken = await getAEMToken();
-  if (aemToken) {
-    const aemMetaTag = document.querySelector('meta[name="urn:adobe:aue:system:aemconnection"]');
-    if (aemMetaTag) {
-      const newAemContent = `aem:${AEM_HOST}?login-token=${aemToken}`;
-      aemMetaTag.setAttribute('content', newAemContent);
-      // eslint-disable-next-line no-console
-      console.log('Updated AEM connection with token');
+  try {
+    // Update AEM connection
+    const aemToken = await getAEMToken();
+    if (aemToken) {
+      const aemMetaTag = document.querySelector('meta[name="urn:adobe:aue:system:aemconnection"]');
+      if (aemMetaTag) {
+        const newAemContent = `aem:${AEM_HOST}?login-token=${aemToken}`;
+        aemMetaTag.setAttribute('content', newAemContent);
+        // eslint-disable-next-line no-console
+        console.log('Updated AEM connection with token');
+      }
     }
-  }
 
-  // Update UE service connection
-  const ueToken = await getUEToken();
-  if (ueToken) {
-    const ueMetaTag = document.querySelector('meta[name="urn:adobe:aue:config:service"]');
-    if (ueMetaTag) {
-      const newUeContent = `${UE_SERVICE_URL}?token=${ueToken}`;
-      ueMetaTag.setAttribute('content', newUeContent);
-      // eslint-disable-next-line no-console
-      console.log('Updated UE service connection with token');
+    // Update UE service connection
+    const ueToken = await getUEToken();
+    if (ueToken) {
+      const ueMetaTag = document.querySelector('meta[name="urn:adobe:aue:config:service"]');
+      if (ueMetaTag) {
+        const newUeContent = `${UE_SERVICE_URL}?token=${ueToken}`;
+        ueMetaTag.setAttribute('content', newUeContent);
+        // eslint-disable-next-line no-console
+        console.log('Updated UE service connection with token');
+      }
     }
-  }
 
-  // Update status indicator
+    // Update status indicator
+    updateTokenIndicator(aemToken && ueToken);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error updating connections:', error);
+    updateTokenIndicator(false);
+  }
+}
+
+function updateTokenIndicator(isAuthenticated) {
   const tokenIndicator = document.createElement('div');
   tokenIndicator.id = 'token-indicator';
   tokenIndicator.style.position = 'fixed';
@@ -836,7 +848,7 @@ async function updateConnections() {
   tokenIndicator.style.borderRadius = '4px';
   tokenIndicator.style.zIndex = '9999';
 
-  if (aemToken && ueToken) {
+  if (isAuthenticated) {
     tokenIndicator.style.background = '#4CAF50';
     tokenIndicator.style.color = 'white';
     tokenIndicator.textContent = 'Authentication: Active';

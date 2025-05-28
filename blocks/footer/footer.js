@@ -18,3 +18,14 @@ export default async function decorate(block) {
 
   block.append(footer);
 }
+
+export default async function init(block) {
+  // Footer block initialization
+  block.innerHTML = `
+    <div>
+      <div>
+        <p>Footer Content</p>
+      </div>
+    </div>
+  `;
+}
