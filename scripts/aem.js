@@ -802,6 +802,34 @@ async function getUEToken() {
   }
 }
 
+function updateTokenIndicator(isAuthenticated) {
+  const tokenIndicator = document.createElement('div');
+  tokenIndicator.id = 'token-indicator';
+  tokenIndicator.style.position = 'fixed';
+  tokenIndicator.style.bottom = '10px';
+  tokenIndicator.style.right = '10px';
+  tokenIndicator.style.padding = '5px 10px';
+  tokenIndicator.style.borderRadius = '4px';
+  tokenIndicator.style.zIndex = '9999';
+
+  if (isAuthenticated) {
+    tokenIndicator.style.background = '#4CAF50';
+    tokenIndicator.style.color = 'white';
+    tokenIndicator.textContent = 'Authentication: Active';
+  } else {
+    tokenIndicator.style.background = '#f44336';
+    tokenIndicator.style.color = 'white';
+    tokenIndicator.textContent = 'Authentication: Missing';
+  }
+
+  // Remove existing indicator if any
+  const existingIndicator = document.getElementById('token-indicator');
+  if (existingIndicator) {
+    existingIndicator.remove();
+  }
+  document.body.appendChild(tokenIndicator);
+}
+
 // Update both AEM and UE connections with their respective tokens
 async function updateConnections() {
   try {
@@ -836,34 +864,6 @@ async function updateConnections() {
     console.error('Error updating connections:', error);
     updateTokenIndicator(false);
   }
-}
-
-function updateTokenIndicator(isAuthenticated) {
-  const tokenIndicator = document.createElement('div');
-  tokenIndicator.id = 'token-indicator';
-  tokenIndicator.style.position = 'fixed';
-  tokenIndicator.style.bottom = '10px';
-  tokenIndicator.style.right = '10px';
-  tokenIndicator.style.padding = '5px 10px';
-  tokenIndicator.style.borderRadius = '4px';
-  tokenIndicator.style.zIndex = '9999';
-
-  if (isAuthenticated) {
-    tokenIndicator.style.background = '#4CAF50';
-    tokenIndicator.style.color = 'white';
-    tokenIndicator.textContent = 'Authentication: Active';
-  } else {
-    tokenIndicator.style.background = '#f44336';
-    tokenIndicator.style.color = 'white';
-    tokenIndicator.textContent = 'Authentication: Missing';
-  }
-
-  // Remove existing indicator if any
-  const existingIndicator = document.getElementById('token-indicator');
-  if (existingIndicator) {
-    existingIndicator.remove();
-  }
-  document.body.appendChild(tokenIndicator);
 }
 
 // Initialize when the page loads
