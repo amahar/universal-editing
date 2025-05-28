@@ -20,6 +20,50 @@
     <title>Universal Editor Getting Started</title>
 </head>
 <body>
-    <h1>Welcome to Universal Editor</h1>
+    <main>
+        <!-- Hero Block -->
+        <div class="hero" data-aue-resource="urn:aemconnection:/content/universal-editor/jcr:content/root/container/hero"
+             data-aue-type="container">
+            <div>
+                <div>
+                    <p>Image</p>
+                    <p>
+                        <img src="/images/hero.jpg" 
+                             alt="Hero Image"
+                             data-aue-resource="urn:aemconnection:/content/universal-editor/jcr:content/root/container/hero/image"
+                             data-aue-type="image">
+                    </p>
+                </div>
+                <div>
+                    <p>Text</p>
+                    <p data-aue-resource="urn:aemconnection:/content/universal-editor/jcr:content/root/container/hero/text"
+                       data-aue-type="text">
+                        Welcome to Universal Editor
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Columns Block -->
+        <div class="columns" data-aue-resource="urn:aemconnection:/content/universal-editor/jcr:content/root/container/columns"
+             data-aue-type="container">
+            <div>
+                <div>
+                    <p>Column 1</p>
+                    <p data-aue-resource="urn:aemconnection:/content/universal-editor/jcr:content/root/container/columns/column1"
+                       data-aue-type="text">
+                        Content for column 1
+                    </p>
+                </div>
+                <div>
+                    <p>Column 2</p>
+                    <p data-aue-resource="urn:aemconnection:/content/universal-editor/jcr:content/root/container/columns/column2"
+                       data-aue-type="text">
+                        Content for column 2
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
 </body>
 </html>
