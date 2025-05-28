@@ -733,11 +733,9 @@ async function getAEMToken() {
     const response = await fetch(`${AEM_HOST}/libs/granite/csrf/token.json`, {
       credentials: 'include',
     });
-    
     if (!response.ok) {
       throw new Error('Failed to get AEM token');
     }
-    
     const data = await response.json();
     // eslint-disable-next-line no-console
     console.log('AEM Token received:', data.token);
