@@ -20,17 +20,29 @@ const aemProxy = createProxyMiddleware({
     '^/aem': '',
   },
   onProxyReq: (proxyReq, req, res) => {
-    // Log the request
-    console.log(`Proxying request to AEM: ${req.method} ${req.url}`);
+    // Log the request details
+    console.log('=== Request Details ===');
+    console.log(`Method: ${req.method}`);
+    console.log(`URL: ${req.url}`);
+    console.log('Headers:', JSON.stringify(req.headers, null, 2));
+    console.log('Cookies:', req.headers.cookie);
     
     // Forward cookies
     if (req.headers.cookie) {
-      proxyReq.setHeader('Cookie', req.headers.cookie);
+      // Split cookies and decode them
+      const cookies = req.headers.cookie.split(';').map(cookie => {
+        const [name, value] = cookie.trim().split('=');
+        return `${name}=${decodeURIComponent(value)}`;
+      }).join('; ');
+      
+      proxyReq.setHeader('Cookie', cookies);
     }
   },
   onProxyRes: (proxyRes, req, res) => {
-    // Log the response
-    console.log(`Received response from AEM: ${proxyRes.statusCode}`);
+    // Log the response details
+    console.log('=== Response Details ===');
+    console.log(`Status: ${proxyRes.statusCode}`);
+    console.log('Headers:', JSON.stringify(proxyRes.headers, null, 2));
     
     // Set CORS headers
     proxyRes.headers['Access-Control-Allow-Origin'] = req.headers.origin || '*';

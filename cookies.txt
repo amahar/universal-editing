@@ -11,6 +11,6 @@
 #
 # Replace the values below with your actual cookie values:
 
-#HttpOnly_author-p34771-e1278037.adobeaemcloud.com	TRUE	/	TRUE	0	affinity	0796e52790876dc1
-#HttpOnly_author-p34771-e1278037.adobeaemcloud.com	TRUE	/	TRUE	0	login-token	REPLACE_WITH_ACTUAL_VALUE
-#HttpOnly_author-p34771-e1278037.adobeaemcloud.com	TRUE	/	TRUE	0	cq-authoring-mode	TOUCH 
+HttpOnly_author-p34771-e1278037.adobeaemcloud.com	TRUE	/	TRUE	0	affinity	0796e52790876dc1
+HttpOnly_author-p34771-e1278037.adobeaemcloud.com	TRUE	/	TRUE	0	login-token	login%3aeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBc2ltLk1haGFyQGljcm9zc2luZy5jb20iLCJleHAiOjE3NDg1Mjc3NTksImlhdCI6MTc0ODQ4NDU1OSwic2NvcGUiOiJsb2dpbiJ9.Jedu85T0S7o3oq3LdqgLf_-VUC5IAoSkIPN-L_WAv9M%3acrx.default
+HttpOnly_author-p34771-e1278037.adobeaemcloud.com	TRUE	/	TRUE	0	cq-authoring-mode	TOUCH 
