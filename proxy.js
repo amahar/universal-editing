@@ -8,7 +8,7 @@ const port = 3001;
 // Enable CORS for all routes
 app.use(cors({
   origin: true,
-  credentials: true
+  credentials: true,
 }));
 
 // AEM proxy configuration
@@ -19,7 +19,7 @@ const aemProxy = createProxyMiddleware({
   pathRewrite: {
     '^/aem': '',
   },
-  onProxyReq: (proxyReq, req, res) => {
+  onProxyReq: (proxyReq, req) => {
     // Log the request details
     console.log('=== Request Details ===');
     console.log(`Method: ${req.method}`);
@@ -30,7 +30,7 @@ const aemProxy = createProxyMiddleware({
     // Forward cookies
     if (req.headers.cookie) {
       // Split cookies and decode them
-      const cookies = req.headers.cookie.split(';').map(cookie => {
+      const cookies = req.headers.cookie.split(';').map((cookie) => {
         const [name, value] = cookie.trim().split('=');
         return `${name}=${decodeURIComponent(value)}`;
       }).join('; ');
@@ -38,7 +38,7 @@ const aemProxy = createProxyMiddleware({
       proxyReq.setHeader('Cookie', cookies);
     }
   },
-  onProxyRes: (proxyRes, req, res) => {
+  onProxyRes: (proxyRes, req) => {
     // Log the response details
     console.log('=== Response Details ===');
     console.log(`Status: ${proxyRes.statusCode}`);
@@ -50,15 +50,15 @@ const aemProxy = createProxyMiddleware({
     
     // Forward cookies from AEM
     if (proxyRes.headers['set-cookie']) {
-      proxyRes.headers['set-cookie'] = proxyRes.headers['set-cookie'].map(cookie =>
-        cookie.replace(/Domain=.*?;/, 'Domain=localhost;')
+      proxyRes.headers['set-cookie'] = proxyRes.headers['set-cookie'].map((cookie) =>
+        cookie.replace(/Domain=.*?;/, 'Domain=localhost;'),
       );
     }
   },
   onError: (err, req, res) => {
     console.error('Proxy Error:', err);
     res.status(500).json({ error: 'Proxy Error', message: err.message });
-  }
+  },
 });
 
 // UE proxy configuration
@@ -69,7 +69,7 @@ const ueProxy = createProxyMiddleware({
   pathRewrite: {
     '^/ue': '',
   },
-  onProxyReq: (proxyReq, req, res) => {
+  onProxyReq: (proxyReq, req) => {
     // Log the request
     console.log(`Proxying request to UE: ${req.method} ${req.url}`);
     
@@ -78,7 +78,7 @@ const ueProxy = createProxyMiddleware({
       proxyReq.setHeader('Cookie', req.headers.cookie);
     }
   },
-  onProxyRes: (proxyRes, req, res) => {
+  onProxyRes: (proxyRes, req) => {
     // Log the response
     console.log(`Received response from UE: ${proxyRes.statusCode}`);
     
@@ -88,15 +88,15 @@ const ueProxy = createProxyMiddleware({
     
     // Forward cookies from UE
     if (proxyRes.headers['set-cookie']) {
-      proxyRes.headers['set-cookie'] = proxyRes.headers['set-cookie'].map(cookie =>
-        cookie.replace(/Domain=.*?;/, 'Domain=localhost;')
+      proxyRes.headers['set-cookie'] = proxyRes.headers['set-cookie'].map((cookie) =>
+        cookie.replace(/Domain=.*?;/, 'Domain=localhost;'),
       );
     }
   },
   onError: (err, req, res) => {
     console.error('Proxy Error:', err);
     res.status(500).json({ error: 'Proxy Error', message: err.message });
-  }
+  },
 });
 
 // Add a test endpoint
