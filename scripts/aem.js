@@ -742,24 +742,39 @@ async function getAEMToken() {
   try {
     // Check if we're on the same origin as AEM
     const isSameOrigin = window.location.origin === new URL(AEM_HOST).origin;
-    if (!isSameOrigin) {
-      // eslint-disable-next-line no-console
-      console.warn('Not on AEM origin, skipping token fetch');
-      return null;
-    }
+    
+    // Use relative URL if on same origin, otherwise use full URL
+    const tokenUrl = isSameOrigin 
+      ? '/libs/granite/csrf/token.json'
+      : `${AEM_HOST}/libs/granite/csrf/token.json`;
 
-    const response = await fetch(`${AEM_HOST}/libs/granite/csrf/token.json`, {
+    // eslint-disable-next-line no-console
+    console.log('Attempting to fetch AEM token from:', tokenUrl);
+    
+    const response = await fetch(tokenUrl, {
       credentials: 'include',
       headers: {
         Accept: 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
       },
+      mode: isSameOrigin ? 'same-origin' : 'cors',
     });
+    
     if (!response.ok) {
-      throw new Error(`Failed to get AEM token: ${response.status} ${response.statusText}`);
+      // eslint-disable-next-line no-console
+      console.error(`Failed to get AEM token: ${response.status} ${response.statusText}`);
+      return null;
     }
+    
     const data = await response.json();
+    if (!data.token) {
+      // eslint-disable-next-line no-console
+      console.error('AEM token response missing token property');
+      return null;
+    }
+    
     // eslint-disable-next-line no-console
-    console.log('AEM Token received');
+    console.log('Successfully received AEM token');
     return data.token;
   } catch (error) {
     // eslint-disable-next-line no-console
@@ -778,22 +793,36 @@ async function getUEToken() {
       return null;
     }
 
+    // eslint-disable-next-line no-console
+    console.log('Attempting to fetch UE token');
+    
     // Get UE token using AEM token
     const response = await fetch(`${UE_SERVICE_URL}/auth/token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
         Authorization: `Bearer ${aemToken}`,
       },
+      mode: 'cors',
+      credentials: 'include',
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to get UE token: ${response.status} ${response.statusText}`);
+      // eslint-disable-next-line no-console
+      console.error(`Failed to get UE token: ${response.status} ${response.statusText}`);
+      return null;
     }
 
     const data = await response.json();
+    if (!data.token) {
+      // eslint-disable-next-line no-console
+      console.error('UE token response missing token property');
+      return null;
+    }
+    
     // eslint-disable-next-line no-console
-    console.log('UE Token received');
+    console.log('Successfully received UE token');
     return data.token;
   } catch (error) {
     // eslint-disable-next-line no-console
