@@ -31,7 +31,7 @@ const aemProxy = createProxyMiddleware({
     console.log('Headers:', JSON.stringify(req.headers, null, 2));
     // eslint-disable-next-line no-console
     console.log('Cookies:', req.headers.cookie);
-    
+
     // Forward cookies
     if (req.headers.cookie) {
       // Split cookies and decode them
@@ -39,7 +39,7 @@ const aemProxy = createProxyMiddleware({
         const [name, value] = cookie.trim().split('=');
         return `${name}=${decodeURIComponent(value)}`;
       }).join('; ');
-      
+
       proxyReq.setHeader('Cookie', cookies);
     }
   },
@@ -51,16 +51,14 @@ const aemProxy = createProxyMiddleware({
     console.log(`Status: ${proxyRes.statusCode}`);
     // eslint-disable-next-line no-console
     console.log('Headers:', JSON.stringify(proxyRes.headers, null, 2));
-    
+
     // Set CORS headers
     proxyRes.headers['Access-Control-Allow-Origin'] = req.headers.origin || '*';
     proxyRes.headers['Access-Control-Allow-Credentials'] = 'true';
-    
+
     // Forward cookies from AEM
     if (proxyRes.headers['set-cookie']) {
-      proxyRes.headers['set-cookie'] = proxyRes.headers['set-cookie'].map((cookie) =>
-        cookie.replace(/Domain=.*?;/, 'Domain=localhost;'),
-      );
+      proxyRes.headers['set-cookie'] = proxyRes.headers['set-cookie'].map((cookie) => cookie.replace(/Domain=.*?;/, 'Domain=localhost;'));
     }
   },
   onError: (err, req, res) => {
@@ -82,7 +80,7 @@ const ueProxy = createProxyMiddleware({
     // Log the request
     // eslint-disable-next-line no-console
     console.log(`Proxying request to UE: ${req.method} ${req.url}`);
-    
+
     // Forward cookies
     if (req.headers.cookie) {
       proxyReq.setHeader('Cookie', req.headers.cookie);
@@ -92,16 +90,14 @@ const ueProxy = createProxyMiddleware({
     // Log the response
     // eslint-disable-next-line no-console
     console.log(`Received response from UE: ${proxyRes.statusCode}`);
-    
+
     // Set CORS headers
     proxyRes.headers['Access-Control-Allow-Origin'] = req.headers.origin || '*';
     proxyRes.headers['Access-Control-Allow-Credentials'] = 'true';
-    
+
     // Forward cookies from UE
     if (proxyRes.headers['set-cookie']) {
-      proxyRes.headers['set-cookie'] = proxyRes.headers['set-cookie'].map((cookie) =>
-        cookie.replace(/Domain=.*?;/, 'Domain=localhost;'),
-      );
+      proxyRes.headers['set-cookie'] = proxyRes.headers['set-cookie'].map((cookie) => cookie.replace(/Domain=.*?;/, 'Domain=localhost;'));
     }
   },
   onError: (err, req, res) => {
