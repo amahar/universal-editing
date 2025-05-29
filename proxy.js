@@ -21,10 +21,15 @@ const aemProxy = createProxyMiddleware({
   },
   onProxyReq: (proxyReq, req) => {
     // Log the request details
+    // eslint-disable-next-line no-console
     console.log('=== Request Details ===');
+    // eslint-disable-next-line no-console
     console.log(`Method: ${req.method}`);
+    // eslint-disable-next-line no-console
     console.log(`URL: ${req.url}`);
+    // eslint-disable-next-line no-console
     console.log('Headers:', JSON.stringify(req.headers, null, 2));
+    // eslint-disable-next-line no-console
     console.log('Cookies:', req.headers.cookie);
     
     // Forward cookies
@@ -40,8 +45,11 @@ const aemProxy = createProxyMiddleware({
   },
   onProxyRes: (proxyRes, req) => {
     // Log the response details
+    // eslint-disable-next-line no-console
     console.log('=== Response Details ===');
+    // eslint-disable-next-line no-console
     console.log(`Status: ${proxyRes.statusCode}`);
+    // eslint-disable-next-line no-console
     console.log('Headers:', JSON.stringify(proxyRes.headers, null, 2));
     
     // Set CORS headers
@@ -56,6 +64,7 @@ const aemProxy = createProxyMiddleware({
     }
   },
   onError: (err, req, res) => {
+    // eslint-disable-next-line no-console
     console.error('Proxy Error:', err);
     res.status(500).json({ error: 'Proxy Error', message: err.message });
   },
@@ -71,6 +80,7 @@ const ueProxy = createProxyMiddleware({
   },
   onProxyReq: (proxyReq, req) => {
     // Log the request
+    // eslint-disable-next-line no-console
     console.log(`Proxying request to UE: ${req.method} ${req.url}`);
     
     // Forward cookies
@@ -80,6 +90,7 @@ const ueProxy = createProxyMiddleware({
   },
   onProxyRes: (proxyRes, req) => {
     // Log the response
+    // eslint-disable-next-line no-console
     console.log(`Received response from UE: ${proxyRes.statusCode}`);
     
     // Set CORS headers
@@ -94,6 +105,7 @@ const ueProxy = createProxyMiddleware({
     }
   },
   onError: (err, req, res) => {
+    // eslint-disable-next-line no-console
     console.error('Proxy Error:', err);
     res.status(500).json({ error: 'Proxy Error', message: err.message });
   },
@@ -112,7 +124,10 @@ app.use('/ue', ueProxy);
 app.listen(port, () => {
   // eslint-disable-next-line no-console
   console.log(`Proxy server running at http://localhost:${port}`);
+  // eslint-disable-next-line no-console
   console.log('Test the proxy with:');
+  // eslint-disable-next-line no-console
   console.log('  - http://localhost:3001/test');
+  // eslint-disable-next-line no-console
   console.log('  - http://localhost:3001/aem/libs/granite/csrf/token.json');
 });
