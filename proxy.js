@@ -41,7 +41,3 @@ app.listen(port, () => {
   // eslint-disable-next-line no-console
   console.log(`Proxy server running at http://localhost:${port}`);
 });
-
-fetch('http://localhost:3001/aem/libs/granite/csrf/token.json', { credentials: 'include' })
-  .then(res => res.json())
-  .then(data => console.log(data));
