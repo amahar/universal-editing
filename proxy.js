@@ -8,38 +8,36 @@ const port = 3001;
 // Enable CORS for all routes
 app.use(cors());
 
-// Proxy middleware configuration
+// AEM proxy configuration
 const aemProxy = createProxyMiddleware({
   target: 'https://author-p34771-e1278037.adobeaemcloud.com',
   changeOrigin: true,
   pathRewrite: {
-    '^/aem': '', // remove base path
+    '^/aem': '',
   },
-  onProxyRes: function (proxyRes, req, res) {
+  onProxyRes: (proxyRes) => {
     proxyRes.headers['Access-Control-Allow-Origin'] = '*';
-    proxyRes.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS';
-    proxyRes.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization';
   },
 });
 
-// Proxy middleware configuration for UE service
+// UE proxy configuration
 const ueProxy = createProxyMiddleware({
   target: 'https://universal-editor-service.adobe.io',
   changeOrigin: true,
   pathRewrite: {
-    '^/ue': '', // remove base path
+    '^/ue': '',
   },
-  onProxyRes: function (proxyRes, req, res) {
+  onProxyRes: (proxyRes) => {
     proxyRes.headers['Access-Control-Allow-Origin'] = '*';
-    proxyRes.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS';
-    proxyRes.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization';
   },
 });
 
-// Use the proxy middleware
+// Use proxy middleware
 app.use('/aem', aemProxy);
 app.use('/ue', ueProxy);
 
+// Start server
 app.listen(port, () => {
+  // eslint-disable-next-line no-console
   console.log(`Proxy server running at http://localhost:${port}`);
-}); 
+});

@@ -742,15 +742,15 @@ async function getAEMToken() {
   try {
     // Check if we're on the same origin as AEM
     const isSameOrigin = window.location.origin === new URL(AEM_HOST).origin;
-    
+
     // Use relative URL if on same origin, otherwise use full URL
-    const tokenUrl = isSameOrigin 
+    const tokenUrl = isSameOrigin
       ? '/libs/granite/csrf/token.json'
       : `${AEM_HOST}/libs/granite/csrf/token.json`;
 
     // eslint-disable-next-line no-console
     console.log('Attempting to fetch AEM token from:', tokenUrl);
-    
+
     const response = await fetch(tokenUrl, {
       credentials: 'include',
       headers: {
@@ -759,20 +759,20 @@ async function getAEMToken() {
       },
       mode: isSameOrigin ? 'same-origin' : 'cors',
     });
-    
+
     if (!response.ok) {
       // eslint-disable-next-line no-console
       console.error(`Failed to get AEM token: ${response.status} ${response.statusText}`);
       return null;
     }
-    
+
     const data = await response.json();
     if (!data.token) {
       // eslint-disable-next-line no-console
       console.error('AEM token response missing token property');
       return null;
     }
-    
+
     // eslint-disable-next-line no-console
     console.log('Successfully received AEM token');
     return data.token;
@@ -795,7 +795,7 @@ async function getUEToken() {
 
     // eslint-disable-next-line no-console
     console.log('Attempting to fetch UE token');
-    
+
     // Get UE token using AEM token
     const response = await fetch(`${UE_SERVICE_URL}/auth/token`, {
       method: 'POST',
@@ -820,7 +820,7 @@ async function getUEToken() {
       console.error('UE token response missing token property');
       return null;
     }
-    
+
     // eslint-disable-next-line no-console
     console.log('Successfully received UE token');
     return data.token;
